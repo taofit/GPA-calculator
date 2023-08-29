@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  server:
+    depends_on: 
+      - database
+    build:
+      context: .
+    container_name: gpa-calculator-server
+    hostname: gpa-calculator-server
+    networks:
+      - mynet
+    ports:
+      - 8080:8080
+    deploy:
+      restart_policy:
+        condition: on-failure
+  database:
+    image: postgres:alpine
+    container_name: gpa-calculator-database
+    hostname: db
+    networks:
+      - mynet
+    environment:
+      - POSTGRES_USER:${DB_USER}
+      - POSTGRES_DB:${DB_NAME}
+      - POSTGRES_PASSWORD:${DB_PASSWORD}
+    ports:
+      - 5432:5432
+    volumes:
+      - data:/var/lib/postgresql/data
+
+volumes:
+  data:
+
+networks:
+  mynet:
+    driver: bridge
