@@ -25,10 +25,32 @@ services:
       - POSTGRES_USER:${DB_USER}
       - POSTGRES_DB:${DB_NAME}
       - POSTGRES_PASSWORD:${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     ports:
       - 5432:5432
     volumes:
       - data:/var/lib/postgresql/data
+  migrate:
+    image: migrate/migrate:latest
+    networks:
+      - mynet
+    volumes:
+      - ./migrations:/migrations
+    entrypoint:
+      [
+        "migrate",
+        "-path",
+        "/migrations",
+        "-database",
+        "postgres://admin:password@database:5432/gpa_calculator?sslmode=disable",
+      ]
+    command: ["up"]
+    depends_on:
+      - database 
 
 volumes:
   data:

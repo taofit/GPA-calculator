@@ -54,6 +54,10 @@ func (d *DBInstance) GetStudentsGPA() ([]StudentGPA, error) {
 	return stdntsGPA, nil
 }
 
+func (d *DBInstance) CloseConn() {
+	defer d.db.Close()
+}
+
 func getStudentGPA(row *sql.Rows) (StudentGPA, error) {
 	stdntGPA := StudentGPA{}
 	err := row.Scan(

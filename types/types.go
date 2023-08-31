@@ -1,4 +1,4 @@
-package main
+package types
 
 type Grade struct {
 	SchoolID  int `json:"schoolID"`

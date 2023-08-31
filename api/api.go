@@ -11,21 +11,22 @@ import (
 
 type APIServer struct {
 	listenAdr string
-	db        database.DBHandle
+	dbHandle  database.DBHandle
 }
 
 type apiFunc func(http.ResponseWriter, *http.Request) error
 
-func NewAPIServer(listenAdr string, db database.DBHandle) *APIServer {
+func NewAPIServer(listenAdr string, dbHandle database.DBHandle) *APIServer {
 	return &APIServer{
 		listenAdr: listenAdr,
-		db:        db,
+		dbHandle:  dbHandle,
 	}
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) error {
 	w.WriteHeader(status)
 	w.Header().Set("Content-Type", "application/json")
+	
 	return json.NewEncoder(w).Encode(v)
 }
 
@@ -37,13 +38,17 @@ func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
 	}
 }
 
-func (s *APIServer) retrieveStudentsGPA(w http.ResponseWriter, r *http.Request) error {
-	return nil
+func (s *APIServer) handleRetrieveStudentsGPA(w http.ResponseWriter, r *http.Request) error {
+	stdntsGPA, err := s.dbHandle.GetStudentsGPA()
+	if err != nil {
+		return nil
+	}
+	return writeJSON(w, http.StatusOK, stdntsGPA)
 }
 
 func (s *APIServer) Run() {
 	router := mux.NewRouter()
-	router.HandleFunc("/students/gpa", makeHTTPHandleFunc(s.retrieveStudentsGPA))
+	router.HandleFunc("/students/gpa", makeHTTPHandleFunc(s.handleRetrieveStudentsGPA))
 
 	log.Printf("API server is funning on port: %s", s.listenAdr)
 	log.Fatal(http.ListenAndServe(s.listenAdr, router))
