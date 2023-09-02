@@ -1,0 +1,27 @@
+[
+    {
+        "SchoolID":  1,
+	    "StudentID": 1,
+	    "CourseID":  1,
+	    "Grade":     "B"
+    },
+    {
+        "SchoolID":  1,
+	    "StudentID": 1,
+	    "CourseID":  1,
+	    "Grade":     "B"
+    },
+    {
+        "SchoolID":  1,
+	    "StudentID": 1,
+	    "CourseID":  1,
+	    "Grade":     "B"
+    },
+    {
+        "SchoolID":  1,
+	    "StudentID": 1,
+	    "CourseID":  1,
+	    "Grade":     "B"
+    }
+
+]

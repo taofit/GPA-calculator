@@ -6,6 +6,7 @@ import (
 	"os"
 
 	_ "github.com/lib/pq"
+	"github.com/taofit/GPA-calculator/types"
 )
 
 type StudentGPA struct {
@@ -19,14 +20,16 @@ type DBInstance struct {
 
 type DBHandle interface {
 	GetStudentsGPA() ([]StudentGPA, error)
+	CreateGradeScale(types.GradeScale) error
 }
 
 func NewDBInstance() (*DBInstance, error) {
-	dbConnStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"),
+	dbConnStr := fmt.Sprintf("host=database port=5432 user=%s password=%s dbname=%s sslmode=disable",
+		os.Getenv("POSTGRES_USER"),
+		os.Getenv("POSTGRES_PASSWORD"),
+		os.Getenv("POSTGRES_DB"),
 	)
+	// dbConnStr := "postgres://admin:password@localhost/gpa_calculator?sslmode=verify-full"
 	db, err := sql.Open("postgres", dbConnStr)
 	if err != nil {
 		return nil, err
@@ -38,7 +41,7 @@ func NewDBInstance() (*DBInstance, error) {
 }
 
 func (d *DBInstance) GetStudentsGPA() ([]StudentGPA, error) {
-	rows, err := d.db.Query("")
+	rows, err := d.db.Query("select * from grade")
 	if err != nil {
 		return nil, err
 	}
@@ -66,4 +69,14 @@ func getStudentGPA(row *sql.Rows) (StudentGPA, error) {
 	)
 
 	return stdntGPA, err
+}
+
+func (d *DBInstance) CreateGradeScale(gs types.GradeScale) error {
+	query := `INSERT INTO grade_scale (school_id, scale, grade, percent)
+		VALUES ($1, $2, $3, $4)`
+	_, err := d.db.Query(query, gs.SchoolID, gs.Scale, gs.Grade, gs.Percentage)
+	if err != nil {
+		return err
+	}
+	return nil
 }

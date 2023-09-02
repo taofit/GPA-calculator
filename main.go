@@ -15,5 +15,7 @@ func main() {
 	defer db.CloseConn()
 
 	server := api.NewAPIServer(":8080", db)
+
+	server.SeedDB()
 	server.Run()
 }

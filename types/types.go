@@ -1,15 +1,15 @@
 package types
 
 type Grade struct {
-	SchoolID  int `json:"schoolID"`
-	StudentID int `json:"studentID"`
-	CourseID  int `json:"courseID"`
-	Grade     int `json:"grade"`
+	SchoolID  int    `json:"school_id"`
+	StudentID int    `json:"student_id"`
+	CourseID  int    `json:"course_id"`
+	Grade     string `json:"grade"`
 }
 
 type GradeScale struct {
-	SchoolID   int     `json:"schoolID"`
-	Grade      int     `json:"grade"`
-	GPA        float32 `json:"gpa"`
+	SchoolID   int     `json:"school_id"`
+	Scale      float32 `json:"scale"`
+	Grade      string  `json:"grade"`
 	Percentage int     `json:"percentage"`
 }

@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS grade;
+DROP TABLE IF EXISTS grade_scale;

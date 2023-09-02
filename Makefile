@@ -2,7 +2,8 @@
 #== Env Variables ==#
 #===================#
 DOCKER_COMPOSE_FILE ?= docker-compose.yml
-
+# Version
+V?=
 
 #========================#
 #== DATABASE MIGRATION ==#
@@ -22,8 +23,12 @@ migrate-down:
 
 migrate-create: ## Create a DB migration files e.g `make migrate-create name=migration-name`
 migrate-create:
-	docker compose -f ${DOCKER_COMPOSE_FILE} --profile tools run --rm migrate create -ext sql -dir /migrations $(name)
+	docker compose -f ${DOCKER_COMPOSE_FILE} --profile tools run --rm migrate create -ext sql -seq -dir /migrations $(name)
+
+migrate-force-version: ## forece to a version command: make migrate-force-version V=2. V is the forced version number
+migrate-force-version:
+	docker compose -f ${DOCKER_COMPOSE_FILE} --profile tools run --rm migrate force $(V)
 
 shell-db: ## Enter to database console
 shell-db:
-	docker compose -f ${DOCKER_COMPOSE_FILE} exec db psql -U postgres -d postgres
+	docker compose -f ${DOCKER_COMPOSE_FILE} exec database psql -U admin -d gpa_calculator
