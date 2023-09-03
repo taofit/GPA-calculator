@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -57,14 +58,20 @@ func (s *APIServer) Run() {
 }
 
 func (s *APIServer) SeedDB() {
-	gradeScales := generateGradeScales()
+	gradeScales, err := generateGradeScales()
+	if err != nil {
+		log.Fatal(err)
+	}
 	for _, gs := range gradeScales {
 		err := s.dbHandler.CreateGradeScale(gs)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
-	grades := generateGrades()
+	grades, err := generateGrades()
+	if err != nil {
+		log.Fatal(err)
+	}
 	for _, g := range grades {
 		err := s.dbHandler.CreateGrade(g)
 		if err != nil {
@@ -73,30 +80,30 @@ func (s *APIServer) SeedDB() {
 	}
 }
 
-func generateGradeScales() []types.GradeScale {
+func generateGradeScales() ([]types.GradeScale, error) {
 	content, err := ioutil.ReadFile("./api/gradeScales.json")
 	if err != nil {
-		log.Fatal("Error when opening the file: ", err)
+		return nil, fmt.Errorf("error when opening the file: %w", err)
 	}
 	var gradeScales = []types.GradeScale{}
 	err = json.Unmarshal(content, &gradeScales)
 	if err != nil {
-		log.Fatal("Error during Unmarshal(): ", err)
+		return nil, fmt.Errorf("error during Unmarshal(): %w", err)
 	}
 
-	return gradeScales
+	return gradeScales, nil
 }
 
-func generateGrades() []types.Grade {
+func generateGrades() ([]types.Grade, error) {
 	content, err := ioutil.ReadFile("./api/grades.json")
 	if err != nil {
-		log.Fatal("Error when opening the file: ", err)
+		return nil, fmt.Errorf("error when opening the file: %w", err)
 	}
 	var grades = []types.Grade{}
 	err = json.Unmarshal(content, &grades)
 	if err != nil {
-		log.Fatal("Error during Unmarshal(): ", err)
+		return nil, fmt.Errorf("error during Unmarshal(): %w", err)
 	}
 
-	return grades
+	return grades, nil
 }

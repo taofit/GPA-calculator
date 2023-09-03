@@ -10,8 +10,9 @@ import (
 )
 
 type StudentGPA struct {
-	SchoolID int     `json:"schoolID"`
-	GPA      float32 `json:"gpa"`
+	SchoolID  int     `json:"school_id"`
+	StudentID int     `json:"student_id"`
+	GPA       float32 `json:"gpa"`
 }
 
 type DBInstance struct {
@@ -30,7 +31,6 @@ func NewDBInstance() (*DBInstance, error) {
 		os.Getenv("POSTGRES_PASSWORD"),
 		os.Getenv("POSTGRES_DB"),
 	)
-	// dbConnStr := "postgres://admin:password@localhost/gpa_calculator?sslmode=verify-full"
 	db, err := sql.Open("postgres", dbConnStr)
 	if err != nil {
 		return nil, err
@@ -42,20 +42,29 @@ func NewDBInstance() (*DBInstance, error) {
 }
 
 func (d *DBInstance) GetStudentsGPA() ([]StudentGPA, error) {
-	rows, err := d.db.Query("select * from grade")
+	rows, err := d.db.Query(`
+		SELECT g.school_id, g.student_id, AVG(gs.scale)::NUMERIC(10,1) gpa
+		FROM grade g
+		INNER JOIN grade_scale gs ON
+		g.school_id = gs.school_id
+		AND
+		g.grade = gs.grade
+		GROUP BY g.school_id, g.student_id
+		ORDER BY g.school_id, g.student_id;`)
+
 	if err != nil {
 		return nil, err
 	}
-	stdntsGPA := []StudentGPA{}
+	sdtsGPA := []StudentGPA{}
 	for rows.Next() {
-		stdntGPA, err := getStudentGPA(rows)
+		sdtGPA, err := getStudentGPA(rows)
 		if err != nil {
 			return nil, err
 		}
-		stdntsGPA = append(stdntsGPA, stdntGPA)
+		sdtsGPA = append(sdtsGPA, sdtGPA)
 	}
 
-	return stdntsGPA, nil
+	return sdtsGPA, nil
 }
 
 func (d *DBInstance) CloseConn() {
@@ -66,6 +75,7 @@ func getStudentGPA(row *sql.Rows) (StudentGPA, error) {
 	stdntGPA := StudentGPA{}
 	err := row.Scan(
 		&stdntGPA.SchoolID,
+		&stdntGPA.StudentID,
 		&stdntGPA.GPA,
 	)
 
