@@ -64,102 +64,31 @@ func (s *APIServer) SeedDB() {
 			log.Fatal(err)
 		}
 	}
-	// grades := generateGrades()
+	grades := generateGrades()
+	for _, g := range grades {
+		err := s.dbHandler.CreateGrade(g)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 }
 
 func generateGradeScales() []types.GradeScale {
-	schoolGradeScales := []types.GradeScale{
-		{
-			SchoolID:   1,
-			Scale:      4.0,
-			Grade:      "A",
-			Percentage: 90,
-		},
-		{
-			SchoolID:   1,
-			Scale:      3.0,
-			Grade:      "B",
-			Percentage: 80,
-		},
-		{
-			SchoolID:   1,
-			Scale:      2.0,
-			Grade:      "C",
-			Percentage: 70,
-		},
-		{
-			SchoolID:   1,
-			Scale:      1.0,
-			Grade:      "D",
-			Percentage: 60,
-		},
-		{
-			SchoolID:   1,
-			Scale:      0.0,
-			Grade:      "F",
-			Percentage: 59,
-		},
-		{
-			SchoolID:   2,
-			Scale:      4.5,
-			Grade:      "A+",
-			Percentage: 95,
-		},
-		{
-			SchoolID:   2,
-			Scale:      4.0,
-			Grade:      "A",
-			Percentage: 90,
-		},
-		{
-			SchoolID:   2,
-			Scale:      3.5,
-			Grade:      "B+",
-			Percentage: 85,
-		},
-		{
-			SchoolID:   2,
-			Scale:      3.0,
-			Grade:      "B",
-			Percentage: 80,
-		},
-		{
-			SchoolID:   2,
-			Scale:      2.5,
-			Grade:      "C+",
-			Percentage: 75,
-		},
-		{
-			SchoolID:   2,
-			Scale:      2.0,
-			Grade:      "C",
-			Percentage: 70,
-		},
-		{
-			SchoolID:   2,
-			Scale:      1.5,
-			Grade:      "D+",
-			Percentage: 65,
-		},
-		{
-			SchoolID:   2,
-			Scale:      1.0,
-			Grade:      "D",
-			Percentage: 60,
-		},
-		{
-			SchoolID:   2,
-			Scale:      0.0,
-			Grade:      "F",
-			Percentage: 59,
-		},
+	content, err := ioutil.ReadFile("./api/gradeScales.json")
+	if err != nil {
+		log.Fatal("Error when opening the file: ", err)
+	}
+	var gradeScales = []types.GradeScale{}
+	err = json.Unmarshal(content, &gradeScales)
+	if err != nil {
+		log.Fatal("Error during Unmarshal(): ", err)
 	}
 
-	return schoolGradeScales
+	return gradeScales
 }
 
 func generateGrades() []types.Grade {
-	content, err := ioutil.ReadFile("./grades.json")
+	content, err := ioutil.ReadFile("./api/grades.json")
 	if err != nil {
 		log.Fatal("Error when opening the file: ", err)
 	}
@@ -167,32 +96,6 @@ func generateGrades() []types.Grade {
 	err = json.Unmarshal(content, &grades)
 	if err != nil {
 		log.Fatal("Error during Unmarshal(): ", err)
-	}
-	grades = []types.Grade{
-		{
-			SchoolID:  1,
-			StudentID: 1,
-			CourseID:  1,
-			Grade:     "B",
-		},
-		{
-			SchoolID:  1,
-			StudentID: 1,
-			CourseID:  2,
-			Grade:     "A",
-		},
-		{
-			SchoolID:  1,
-			StudentID: 1,
-			CourseID:  3,
-			Grade:     "C",
-		},
-		{
-			SchoolID:  1,
-			StudentID: 1,
-			CourseID:  4,
-			Grade:     "D",
-		},
 	}
 
 	return grades

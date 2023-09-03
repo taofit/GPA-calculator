@@ -1,27 +1,152 @@
 [
     {
-        "SchoolID":  1,
-	    "StudentID": 1,
-	    "CourseID":  1,
-	    "Grade":     "B"
+        "school_id":  1,
+	    "student_id": 1,
+	    "course_id":  1,
+	    "grade":     "B"
     },
     {
-        "SchoolID":  1,
-	    "StudentID": 1,
-	    "CourseID":  1,
-	    "Grade":     "B"
+        "school_id":  1,
+	    "student_id": 1,
+	    "course_id":  2,
+	    "grade":     "A"
     },
     {
-        "SchoolID":  1,
-	    "StudentID": 1,
-	    "CourseID":  1,
-	    "Grade":     "B"
+        "school_id":  1,
+	    "student_id": 1,
+	    "course_id":  3,
+	    "grade":     "D"
     },
     {
-        "SchoolID":  1,
-	    "StudentID": 1,
-	    "CourseID":  1,
-	    "Grade":     "B"
+        "school_id":  1,
+	    "student_id": 1,
+	    "course_id":  4,
+	    "grade":     "C"
+    },
+    {
+        "school_id":  1,
+	    "student_id": 1,
+	    "course_id":  5,
+	    "grade":     "F"
+    },
+    {
+        "school_id":  1,
+	    "student_id": 2,
+	    "course_id":  1,
+	    "grade":     "A"
+    },
+    {
+        "school_id":  1,
+	    "student_id": 2,
+	    "course_id":  2,
+	    "grade":     "D"
+    },
+    {
+        "school_id":  1,
+	    "student_id": 2,
+	    "course_id":  3,
+	    "grade":     "D"
+    },
+    {
+        "school_id":  1,
+	    "student_id": 2,
+	    "course_id":  4,
+	    "grade":     "C"
+    },
+    {
+        "school_id":  1,
+	    "student_id": 2,
+	    "course_id":  5,
+	    "grade":     "A"
+    },
+    {
+        "school_id":  2,
+	    "student_id": 1,
+	    "course_id":  1,
+	    "grade":     "A"
+    },
+    {
+        "school_id":  2,
+	    "student_id": 1,
+	    "course_id":  2,
+	    "grade":     "A"
+    },
+    {
+        "school_id":  2,
+	    "student_id": 1,
+	    "course_id":  3,
+	    "grade":     "A+"
+    },
+    {
+        "school_id":  2,
+	    "student_id": 1,
+	    "course_id":  4,
+	    "grade":     "B+"
+    },
+    {
+        "school_id":  2,
+	    "student_id": 1,
+	    "course_id":  5,
+	    "grade":     "C"
+    },
+    {
+        "school_id":  2,
+	    "student_id": 2,
+	    "course_id":  1,
+	    "grade":     "D+"
+    },
+    {
+        "school_id":  2,
+	    "student_id": 2,
+	    "course_id":  2,
+	    "grade":     "B+"
+    },
+    {
+        "school_id":  2,
+	    "student_id": 2,
+	    "course_id":  3,
+	    "grade":     "C"
+    },
+    {
+        "school_id":  2,
+	    "student_id": 2,
+	    "course_id":  4,
+	    "grade":     "A+"
+    },
+    {
+        "school_id":  2,
+	    "student_id": 2,
+	    "course_id":  5,
+	    "grade":     "F"
+    },
+    {
+        "school_id":  2,
+	    "student_id": 3,
+	    "course_id":  1,
+	    "grade":     "B+"
+    },
+    {
+        "school_id":  2,
+	    "student_id": 3,
+	    "course_id":  2,
+	    "grade":     "F"
+    },
+    {
+        "school_id":  2,
+	    "student_id": 3,
+	    "course_id":  3,
+	    "grade":     "C+"
+    },
+    {
+        "school_id":  2,
+	    "student_id": 3,
+	    "course_id":  4,
+	    "grade":     "C+"
+    },
+    {
+        "school_id":  2,
+	    "student_id": 3,
+	    "course_id":  5,
+	    "grade":     "D"
     }
-
 ]

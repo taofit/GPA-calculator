@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS grade (
     grade VARCHAR(2),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ,
-    deleted_at TIMESTAMPTZ
+    deleted_at TIMESTAMPTZ,
+    UNIQUE(school_id, student_id, course_id)
 );
 
 CREATE TABLE IF NOT EXISTS grade_scale (

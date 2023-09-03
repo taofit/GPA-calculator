@@ -1,0 +1,86 @@
+[
+    {
+        "school_id":   1,
+        "scale":      4.0,
+        "grade":      "A",
+        "percentage": 90
+    },
+    {
+        "school_id":   1,
+        "scale":      3.0,
+        "grade":      "B",
+        "percentage": 80
+    },
+    {
+        "school_id":   1,
+        "scale":      2.0,
+        "grade":      "C",
+        "percentage": 70
+    },
+    {
+        "school_id":   1,
+        "scale":      1.0,
+        "grade":      "D",
+        "percentage": 60
+    },
+    {
+        "school_id":   1,
+        "scale":      0.0,
+        "grade":      "F",
+        "percentage": 59
+    },
+    {
+        "school_id":   2,
+        "scale":      4.5,
+        "grade":      "A+",
+        "percentage": 95
+    },
+    {
+        "school_id":   2,
+        "scale":      4.0,
+        "grade":      "A",
+        "percentage": 90
+    },
+    {
+        "school_id":   2,
+        "scale":      3.5,
+        "grade":      "B+",
+        "percentage": 85
+    },
+    {
+        "school_id":   2,
+        "scale":      3.0,
+        "grade":      "B",
+        "percentage": 80
+    },
+    {
+        "school_id":   2,
+        "scale":      2.5,
+        "grade":      "C+",
+        "percentage": 75
+    },
+    {
+        "school_id":   2,
+        "scale":      2.0,
+        "grade":      "C",
+        "percentage": 70
+    },
+    {
+        "school_id":   2,
+        "scale":      1.5,
+        "grade":      "D+",
+        "percentage": 65
+    },
+    {
+        "school_id":   2,
+        "scale":      1.0,
+        "grade":      "D",
+        "percentage": 60
+    },
+    {
+        "school_id":   2,
+        "scale":      0.0,
+        "grade":      "F",
+        "percentage": 59
+    }
+]
