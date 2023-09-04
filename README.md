@@ -41,6 +41,6 @@ If more tables need to be added.
 - Add cache or pagination in the GPA end point, as it will fetch all students GPAs
 - Add students grade and score to via an end point
 - Add more test function and test cases
-- Or may seed the in another server
+- Or may seed the database in another server
 
 ## Thanks
