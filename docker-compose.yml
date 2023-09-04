@@ -50,12 +50,23 @@ services:
         "-path",
         "/migrations",
         "-database",
-        "postgres://admin:password@database:5432/gpa_calculator?sslmode=disable",
+        "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}?sslmode=disable",
       ]
     command: ["up"]
     depends_on:
       - database 
-
+  testsuite:
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    networks:
+      - mynet
+    depends_on:
+      - database
+    volumes:
+      - .:/app
 volumes:
   data:
 

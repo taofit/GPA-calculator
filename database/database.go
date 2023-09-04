@@ -31,11 +31,17 @@ func NewDBInstance() (*DBInstance, error) {
 		os.Getenv("POSTGRES_PASSWORD"),
 		os.Getenv("POSTGRES_DB"),
 	)
+	// another way to connect to postgres
+	// dbConnStr := fmt.Sprintf("postgres://%s:%s@database:5432/%s?sslmode=disable",
+	// 	os.Getenv("POSTGRES_USER"),
+	// 	os.Getenv("POSTGRES_PASSWORD"),
+	// 	os.Getenv("POSTGRES_DB"),
+	// )
+
 	db, err := sql.Open("postgres", dbConnStr)
 	if err != nil {
 		return nil, err
 	}
-
 	return &DBInstance{
 		db: db,
 	}, nil
@@ -104,4 +110,9 @@ func (d *DBInstance) CreateGrade(g types.Grade) error {
 		return err
 	}
 	return nil
+}
+
+func (db *DBInstance) ClearTables() {
+	db.db.Exec("DELETE FROM GRADE_SCALE")
+	db.db.Exec("DELETE FROM grade")
 }

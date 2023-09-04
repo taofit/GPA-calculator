@@ -53,12 +53,18 @@ func (s *APIServer) Run() {
 	router := mux.NewRouter()
 	router.HandleFunc("/students/gpa", makeHTTPHandleFunc(s.handleRetrieveStudentsGPA))
 
-	log.Printf("API server is funning on port: %s", s.listenAdr)
+	log.Printf("API server is running on port: %s", s.listenAdr)
 	log.Fatal(http.ListenAndServe(s.listenAdr, router))
 }
 
-func (s *APIServer) SeedDB() {
-	gradeScales, err := generateGradeScales()
+func (s *APIServer) SeedDB(args ...string) {
+	gsJsonPath := "./api/gradeScales.json"
+	gJsonPath := "./api/grades.json"
+	if len(args) == 2 {
+		gsJsonPath = args[0]
+		gJsonPath = args[1]
+	}
+	gradeScales, err := generateGradeScales(gsJsonPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -68,7 +74,7 @@ func (s *APIServer) SeedDB() {
 			log.Fatal(err)
 		}
 	}
-	grades, err := generateGrades()
+	grades, err := generateGrades(gJsonPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -80,8 +86,8 @@ func (s *APIServer) SeedDB() {
 	}
 }
 
-func generateGradeScales() ([]types.GradeScale, error) {
-	content, err := ioutil.ReadFile("./api/gradeScales.json")
+func generateGradeScales(gsJsonPath string) ([]types.GradeScale, error) {
+	content, err := ioutil.ReadFile(gsJsonPath)
 	if err != nil {
 		return nil, fmt.Errorf("error when opening the file: %w", err)
 	}
@@ -94,8 +100,8 @@ func generateGradeScales() ([]types.GradeScale, error) {
 	return gradeScales, nil
 }
 
-func generateGrades() ([]types.Grade, error) {
-	content, err := ioutil.ReadFile("./api/grades.json")
+func generateGrades(gJsonPath string) ([]types.Grade, error) {
+	content, err := ioutil.ReadFile(gJsonPath)
 	if err != nil {
 		return nil, fmt.Errorf("error when opening the file: %w", err)
 	}
