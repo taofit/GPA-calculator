@@ -27,5 +27,4 @@ CREATE TABLE IF NOT EXISTS grade (
         REFERENCES grade_scale("school_id", "grade")
 );
 
-
 COMMIT;
