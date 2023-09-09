@@ -13,3 +13,12 @@ type GradeScale struct {
 	Grade      string  `json:"grade"`
 	Percentage int     `json:"percentage"`
 }
+
+func NewGrade(schoolId, studentId, courseId int, grade string) Grade {
+	return Grade{
+		SchoolID:  schoolId,
+		StudentID: studentId,
+		CourseID:  courseId,
+		Grade:     grade,
+	}
+}

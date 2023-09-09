@@ -41,6 +41,17 @@ func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
 	}
 }
 
+func (s *APIServer) handleStudentsGPA(w http.ResponseWriter, r *http.Request) error {
+	if r.Method == "GET" {
+		return s.handleRetrieveStudentsGPA(w, r)
+	}
+	if r.Method == "POST" {
+		return s.handleCreateStudentsGrade(w, r)
+	}
+
+	return fmt.Errorf("method not allowed %s", r.Method)
+}
+
 func (s *APIServer) handleRetrieveStudentsGPA(w http.ResponseWriter, r *http.Request) error {
 	stdntsGPA, err := s.dbHandler.GetStudentsGPA()
 	if err != nil {
@@ -49,9 +60,23 @@ func (s *APIServer) handleRetrieveStudentsGPA(w http.ResponseWriter, r *http.Req
 	return writeJSON(w, http.StatusOK, stdntsGPA)
 }
 
+func (s *APIServer) handleCreateStudentsGrade(w http.ResponseWriter, r *http.Request) error {
+	var gradeArr = []types.Grade{}
+	if err := json.NewDecoder(r.Body).Decode(&gradeArr); err != nil {
+		return err
+	}
+	for _, g := range gradeArr {
+		err := s.dbHandler.CreateGrade(g)
+		if err != nil {
+			return err
+		}
+	}
+	return writeJSON(w, http.StatusOK, "Students grades are generated successfully!!!")
+}
+
 func (s *APIServer) Run() {
 	router := mux.NewRouter()
-	router.HandleFunc("/students/gpa", makeHTTPHandleFunc(s.handleRetrieveStudentsGPA))
+	router.HandleFunc("/students/gpa", makeHTTPHandleFunc(s.handleStudentsGPA))
 
 	log.Printf("API server is running on port: %s", s.listenAdr)
 	log.Fatal(http.ListenAndServe(s.listenAdr, router))
