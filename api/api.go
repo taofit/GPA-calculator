@@ -1,11 +1,13 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/taofit/GPA-calculator/database"
@@ -18,6 +20,12 @@ type APIServer struct {
 }
 
 type apiFunc func(http.ResponseWriter, *http.Request) error
+type page_key string
+type perPage_key string
+
+const pageKey page_key = "page"
+const perPageKey perPage_key = "perPage"
+const per_page = 10
 
 func NewAPIServer(listenAdr string, dbHandle database.DBHandle) *APIServer {
 	return &APIServer{
@@ -41,26 +49,72 @@ func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
 	}
 }
 
-func (s *APIServer) handleStudentsGPA(w http.ResponseWriter, r *http.Request) error {
-	if r.Method == "GET" {
-		return s.handleRetrieveStudentsGPA(w, r)
+func paginationMiddleware(next http.Handler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+		page, err := strconv.ParseInt(r.URL.Query().Get(string(pageKey)), 10, 0)
+		if err != nil {
+			page = 1
+		}
+		perPage, err := strconv.ParseInt(r.URL.Query().Get(string(perPageKey)), 10, 0)
+		if err != nil {
+			perPage = per_page
+		}
+		if page <= 0 {
+			page = 1
+		}
+		if perPage <= 0 {
+			perPage = per_page
+		}
+		ctx = context.WithValue(ctx, pageKey, page)
+		ctx = context.WithValue(ctx, perPageKey, perPage)
+		r = r.WithContext(ctx)
+		next.ServeHTTP(w, r)
 	}
-	if r.Method == "POST" {
-		return s.handleCreateStudentsGrade(w, r)
+}
+
+func (s *APIServer) handleStudentsGPA(w http.ResponseWriter, r *http.Request) error {
+	if r.Method == http.MethodGet {
+		return s.handleRetrieveStudentsGPA(w, r)
 	}
 
 	return fmt.Errorf("method not allowed %s", r.Method)
 }
 
-func (s *APIServer) handleRetrieveStudentsGPA(w http.ResponseWriter, r *http.Request) error {
-	stdntsGPA, err := s.dbHandler.GetStudentsGPA()
+func (s *APIServer) handleRetrieveStudentsGrade(w http.ResponseWriter, r *http.Request) error {
+	if r.Method != http.MethodGet {
+		return fmt.Errorf("method not allowed %s", r.Method)
+	}
+	ctx := r.Context()
+	page := ctx.Value(pageKey).(int64)
+	perPage := ctx.Value(perPageKey).(int64)
+	stdGrade, err := s.dbHandler.GetStudentsGrade(page, perPage)
 	if err != nil {
 		return err
 	}
-	return writeJSON(w, http.StatusOK, stdntsGPA)
+	if len(stdGrade) == 0 {
+		msg := "There is no record"
+		return writeJSON(w, http.StatusOK, msg)
+	}
+	return writeJSON(w, http.StatusOK, stdGrade)
+}
+
+func (s *APIServer) handleRetrieveStudentsGPA(w http.ResponseWriter, r *http.Request) error {
+	stdGPA, err := s.dbHandler.GetStudentsGPA()
+	if err != nil {
+		return err
+	}
+	if len(stdGPA) == 0 {
+		msg := "There is no record"
+		return writeJSON(w, http.StatusOK, msg)
+	}
+	return writeJSON(w, http.StatusOK, stdGPA)
 }
 
 func (s *APIServer) handleCreateStudentsGrade(w http.ResponseWriter, r *http.Request) error {
+	if r.Method != http.MethodPost {
+		return fmt.Errorf("method not allowed %s", r.Method)
+	}
 	var gradeArr = []types.Grade{}
 	if err := json.NewDecoder(r.Body).Decode(&gradeArr); err != nil {
 		return err
@@ -77,6 +131,8 @@ func (s *APIServer) handleCreateStudentsGrade(w http.ResponseWriter, r *http.Req
 func (s *APIServer) Run() {
 	router := mux.NewRouter()
 	router.HandleFunc("/students/gpa", makeHTTPHandleFunc(s.handleStudentsGPA))
+	router.HandleFunc("/students/grade", makeHTTPHandleFunc(s.handleCreateStudentsGrade))
+	router.HandleFunc("/students/getgrade", paginationMiddleware(makeHTTPHandleFunc(s.handleRetrieveStudentsGrade)))
 
 	log.Printf("API server is running on port: %s", s.listenAdr)
 	log.Fatal(http.ListenAndServe(s.listenAdr, router))
