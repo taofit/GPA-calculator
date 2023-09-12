@@ -29,7 +29,7 @@ type DBInstance struct {
 }
 
 type DBHandle interface {
-	GetStudentsGPA() ([]StudentGPA, error)
+	GetStudentsGPA(int64, int64) ([]StudentGPA, error)
 	CreateGradeScale(types.GradeScale) error
 	CreateGrade(types.Grade) error
 	GetStudentsGrade(int64, int64) ([]Grade, error)
@@ -57,7 +57,8 @@ func NewDBInstance() (*DBInstance, error) {
 	}, nil
 }
 
-func (d *DBInstance) GetStudentsGPA() ([]StudentGPA, error) {
+func (d *DBInstance) GetStudentsGPA(page, perPage int64) ([]StudentGPA, error) {
+	offSet := (page - 1) * perPage
 	rows, err := d.db.Query(`
 		SELECT g.school_id, g.student_id, AVG(gs.scale)::NUMERIC(10,1) gpa
 		FROM grade g
@@ -65,7 +66,8 @@ func (d *DBInstance) GetStudentsGPA() ([]StudentGPA, error) {
 		g.school_id = gs.school_id AND
 		g.grade = gs.grade
 		GROUP BY g.school_id, g.student_id
-		ORDER BY g.school_id, g.student_id;`)
+		ORDER BY g.school_id, g.student_id
+		OFFSET $1 LIMIT $2;`, offSet, perPage)
 
 	if err != nil {
 		return nil, err

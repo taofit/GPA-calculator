@@ -73,18 +73,15 @@ func paginationMiddleware(next http.Handler) http.HandlerFunc {
 	}
 }
 
-func (s *APIServer) handleStudentsGPA(w http.ResponseWriter, r *http.Request) error {
-	if r.Method == http.MethodGet {
-		return s.handleRetrieveStudentsGPA(w, r)
-	}
+// func (s *APIServer) handleStudentsGPA(w http.ResponseWriter, r *http.Request) error {
+// 	if r.Method == http.MethodGet {
+// 		return s.handleRetrieveStudentsGPA(w, r)
+// 	}
 
-	return fmt.Errorf("method not allowed %s", r.Method)
-}
+// 	return fmt.Errorf("method not allowed %s", r.Method)
+// }
 
 func (s *APIServer) handleRetrieveStudentsGrade(w http.ResponseWriter, r *http.Request) error {
-	if r.Method != http.MethodGet {
-		return fmt.Errorf("method not allowed %s", r.Method)
-	}
 	ctx := r.Context()
 	page := ctx.Value(pageKey).(int64)
 	perPage := ctx.Value(perPageKey).(int64)
@@ -100,10 +97,14 @@ func (s *APIServer) handleRetrieveStudentsGrade(w http.ResponseWriter, r *http.R
 }
 
 func (s *APIServer) handleRetrieveStudentsGPA(w http.ResponseWriter, r *http.Request) error {
-	stdGPA, err := s.dbHandler.GetStudentsGPA()
+	ctx := r.Context()
+	page := ctx.Value(pageKey).(int64)
+	perPage := ctx.Value(perPageKey).(int64)
+	stdGPA, err := s.dbHandler.GetStudentsGPA(page, perPage)
 	if err != nil {
 		return err
 	}
+
 	if len(stdGPA) == 0 {
 		msg := "There is no record"
 		return writeJSON(w, http.StatusOK, msg)
@@ -112,9 +113,6 @@ func (s *APIServer) handleRetrieveStudentsGPA(w http.ResponseWriter, r *http.Req
 }
 
 func (s *APIServer) handleCreateStudentsGrade(w http.ResponseWriter, r *http.Request) error {
-	if r.Method != http.MethodPost {
-		return fmt.Errorf("method not allowed %s", r.Method)
-	}
 	var gradeArr = []types.Grade{}
 	if err := json.NewDecoder(r.Body).Decode(&gradeArr); err != nil {
 		return err
@@ -130,9 +128,9 @@ func (s *APIServer) handleCreateStudentsGrade(w http.ResponseWriter, r *http.Req
 
 func (s *APIServer) Run() {
 	router := mux.NewRouter()
-	router.HandleFunc("/students/gpa", makeHTTPHandleFunc(s.handleStudentsGPA))
-	router.HandleFunc("/students/grade", makeHTTPHandleFunc(s.handleCreateStudentsGrade))
-	router.HandleFunc("/students/getgrade", paginationMiddleware(makeHTTPHandleFunc(s.handleRetrieveStudentsGrade)))
+	router.HandleFunc("/students/gpa", paginationMiddleware(makeHTTPHandleFunc(s.handleRetrieveStudentsGPA))).Methods("GET")
+	router.HandleFunc("/students/grade", makeHTTPHandleFunc(s.handleCreateStudentsGrade)).Methods("POST")
+	router.HandleFunc("/students/grade", paginationMiddleware(makeHTTPHandleFunc(s.handleRetrieveStudentsGrade))).Methods("GET")
 
 	log.Printf("API server is running on port: %s", s.listenAdr)
 	log.Fatal(http.ListenAndServe(s.listenAdr, router))
